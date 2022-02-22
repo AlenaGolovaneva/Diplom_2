@@ -1,3 +1,8 @@
 # Ignore folder
 .idea
+.allure
+target/*
+
+# Exception
+!target/surefire-reports
 
