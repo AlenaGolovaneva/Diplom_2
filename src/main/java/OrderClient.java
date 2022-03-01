@@ -1,14 +1,12 @@
 import io.qameta.allure.Step;
-import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 
 import static io.restassured.RestAssured.given;
-import static org.apache.http.HttpStatus.*;
 
 public class OrderClient extends RestAssuredClient{
 
     private String AUTH_PATH = "orders";
-    @Step
+    @Step("Create order request")
     public ValidatableResponse create(Order order, String auth){
         return given()
                 .spec(getBaseSpec())
@@ -16,24 +14,20 @@ public class OrderClient extends RestAssuredClient{
                 .body(order)
                 .when()
                 .post(AUTH_PATH)
-                .then()
-                .assertThat()
-                .statusCode(SC_OK);
+                .then();
     }
 
-    @Step
+    @Step("Create order without auth request")
     public ValidatableResponse createWithoutAuth(Order order){
         return given()
                 .spec(getBaseSpec())
                 .body(order)
                 .when()
                 .post(AUTH_PATH)
-                .then()
-                .assertThat()
-                .statusCode(SC_OK);
+                .then();
     }
 
-    @Step
+    @Step("Create order hash is not correct request")
     public ValidatableResponse createHashIsNotCorrect(Order order, String auth){
         return given()
                 .spec(getBaseSpec())
@@ -41,13 +35,10 @@ public class OrderClient extends RestAssuredClient{
                 .body(order)
                 .when()
                 .post(AUTH_PATH)
-                .then()
-                .assertThat()
-                .statusCode(SC_INTERNAL_SERVER_ERROR)
-                ;
+                .then();
     }
 
-    @Step
+    @Step("Create order without ingredients request")
     public ValidatableResponse createWithoutIngredients(Order order,String auth){
         return given()
                 .spec(getBaseSpec())
@@ -55,12 +46,10 @@ public class OrderClient extends RestAssuredClient{
                 .body(order)
                 .when()
                 .post(AUTH_PATH)
-                .then()
-                .assertThat()
-                .statusCode(SC_BAD_REQUEST);
+                .then();
     }
 
-    @Step
+    @Step("Get order for user request")
     public ValidatableResponse getOrderForUser(String auth){
         return given()
                 .spec(getBaseSpec())
@@ -68,20 +57,16 @@ public class OrderClient extends RestAssuredClient{
                 .when()
                 .get(AUTH_PATH)
                 .then()
-                .log().all()
-                .assertThat()
-                .statusCode(SC_OK);
+                .log().all();
     }
 
-    @Step
+    @Step("Get orders for user without auth ")
     public ValidatableResponse getOrdersForUserWithoutAuth(){
         return given()
                 .spec(getBaseSpec())
                 .when()
                 .get(AUTH_PATH)
                 .then()
-                .log().all()
-                .assertThat()
-                .statusCode(SC_UNAUTHORIZED);
+                .log().all();
     }
 }

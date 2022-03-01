@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.hamcrest.CoreMatchers.is;
 
 public class ChangingUserDataTest {
@@ -37,6 +39,7 @@ public class ChangingUserDataTest {
 
         ValidatableResponse responseChangingUser = userClient.changingUserData(uerChanging, accessToken);
 
+        responseChangingUser.assertThat().statusCode(SC_OK);
         responseChangingUser.assertThat().body("success", is(true));
         responseChangingUser.assertThat().body("user.email", is(uerChanging.email));
         responseChangingUser.assertThat().body("user.name", is(uerChanging.name));
@@ -48,6 +51,7 @@ public class ChangingUserDataTest {
     public void patchUserWithoutAutMessageError() {
         ValidatableResponse responseChangingUser = userClient.changingUserDataError(uerChanging);
 
+        responseChangingUser.assertThat().statusCode(SC_UNAUTHORIZED);
         responseChangingUser.assertThat().body("success", is(false));
         responseChangingUser.assertThat().body("message", is("You should be authorised"));
     }

@@ -2,61 +2,52 @@ import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
 
 import static io.restassured.RestAssured.*;
-import static org.apache.http.HttpStatus.*;
 
 public class UserClient extends RestAssuredClient {
 
     private String AUTH_PATH = "auth";
 
-    @Step
+    @Step("Create user with error request")
     public ValidatableResponse createError(User user){
         return given()
                 .spec(getBaseSpec())
                 .body(user)
                 .when()
                 .post(AUTH_PATH + "/register")
-                .then()
-                .assertThat()
-                .statusCode(SC_FORBIDDEN);
+                .then();
     }
 
-    @Step
+    @Step("Create user request")
     public ValidatableResponse create(User user){
         return given()
                 .spec(getBaseSpec())
                 .body(user)
                 .when()
                 .post(AUTH_PATH + "/register")
-                .then()
-                .assertThat()
-                .statusCode(SC_OK);
+                .then();
     }
 
-    @Step
+    @Step("Login user request")
     public ValidatableResponse login(UserCredentials userCredentials){
         return given()
                 .spec(getBaseSpec())
                 .body(userCredentials)
                 .when()
                 .post(AUTH_PATH + "/login")
-                .then()
-                .assertThat()
-                .statusCode(SC_OK);
+                .then();
     }
 
-    @Step
+    @Step("Login data not correct request")
     public ValidatableResponse loginDataNotCorrect(UserCredentials userCredentials){
         return given()
                 .spec(getBaseSpec())
                 .body(userCredentials)
                 .when()
                 .post(AUTH_PATH + "/login")
-                .then()
-                .assertThat()
-                .statusCode(SC_UNAUTHORIZED);
+                .then();
     }
 
-    @Step
+    @Step("Changing user data request")
     public ValidatableResponse changingUserData(UserChanging userChanging, String auth){
         return given()
                 .spec(getBaseSpec())
@@ -64,25 +55,20 @@ public class UserClient extends RestAssuredClient {
                 .body(userChanging)
                 .when()
                 .patch(AUTH_PATH + "/user")
-                .then()
-                .assertThat()
-                .statusCode(SC_OK);
+                .then();
     }
 
-    @Step
+    @Step("Changing user data error request")
     public ValidatableResponse changingUserDataError(UserChanging userChanging){
         return given()
                 .spec(getBaseSpec())
                 .body(userChanging)
                 .when()
                 .patch(AUTH_PATH + "/user")
-                .then()
-                .assertThat()
-                .statusCode(SC_UNAUTHORIZED);
+                .then();
     }
 
-
-    @Step
+    @Step("Delete user")
     public void delete(String token){
         if(token != null)
         {
@@ -93,7 +79,4 @@ public class UserClient extends RestAssuredClient {
                     .delete("auth/user");
         }
     }
-
-
-
 }

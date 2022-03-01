@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.*;
 
 public class CreatingOrderTest {
@@ -16,7 +17,7 @@ public class CreatingOrderTest {
     public String accessToken;
 
     @Before
-    public void setUp() {
+    public void setUp(){
         userClient = new UserClient();
         orderClient = new OrderClient();
     }
@@ -38,6 +39,7 @@ public class CreatingOrderTest {
         Order order = Order.getIngredients();
         ValidatableResponse responseOrder = orderClient.create(order, accessToken);
 
+        responseOrder.assertThat().statusCode(SC_OK);
         responseOrder.assertThat().body("success", is(true));
         responseOrder.assertThat().body("order.number", notNullValue());
         responseOrder.assertThat().body("order.name", is("Флюоресцентный бессмертный spicy бургер"));
@@ -53,6 +55,7 @@ public class CreatingOrderTest {
         Order order = Order.getIngredients();
         ValidatableResponse responseOrder = orderClient.createWithoutAuth(order);
 
+        responseOrder.assertThat().statusCode(SC_OK);
         responseOrder.assertThat().body("success", is(true));
         responseOrder.assertThat().body("order.number", notNullValue());
         responseOrder.assertThat().body("name", is("Флюоресцентный бессмертный spicy бургер"));
@@ -70,6 +73,7 @@ public class CreatingOrderTest {
         Order order = Order.getInstanceHashIsNotCorrect();
         ValidatableResponse responseOrder = orderClient.createHashIsNotCorrect(order, accessToken);
 
+        responseOrder.assertThat().statusCode(SC_INTERNAL_SERVER_ERROR);
         responseOrder.assertThat().body(containsString("Internal Server Error"));
     }
 
@@ -85,6 +89,7 @@ public class CreatingOrderTest {
         Order order = Order.getEmptyIngredients();
         ValidatableResponse responseOrder = orderClient.createWithoutIngredients(order, accessToken);
 
+        responseOrder.assertThat().statusCode(SC_BAD_REQUEST);
         responseOrder.assertThat().body("success", is(false));
         responseOrder.assertThat().body("message", is("Ingredient ids must be provided"));
     }

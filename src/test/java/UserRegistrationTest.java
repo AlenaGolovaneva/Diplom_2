@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.http.HttpStatus.SC_FORBIDDEN;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -33,6 +35,7 @@ public class UserRegistrationTest {
         ExtractableResponse extractableResponseCreateUser = responseCreateUser.extract();
         accessToken = extractableResponseCreateUser.body().path("accessToken").toString().substring(7);
 
+        responseCreateUser.assertThat().statusCode(SC_OK);
         responseCreateUser.assertThat().body("success", is(true));
         responseCreateUser.assertThat().body("accessToken", notNullValue());
         responseCreateUser.assertThat().body("refreshToken", notNullValue());
@@ -51,6 +54,7 @@ public class UserRegistrationTest {
         ExtractableResponse extractableResponseCreateUser = responseSuccess.extract();
         accessToken = extractableResponseCreateUser.body().path("accessToken").toString().substring(7);
 
+        responseDuplicate.assertThat().statusCode(SC_FORBIDDEN);
         responseDuplicate.assertThat().body("success", is(false));
         responseDuplicate.assertThat().body("message", is("User already exists"));
     }
@@ -62,6 +66,7 @@ public class UserRegistrationTest {
         User user = User.getEmptyPassword();
         ValidatableResponse responseError = userClient.createError(user);
 
+        responseError.assertThat().statusCode(SC_FORBIDDEN);
         responseError.assertThat().body("success", is(false));
         responseError.assertThat().body("message", is("Email, password and name are required fields"));
     }

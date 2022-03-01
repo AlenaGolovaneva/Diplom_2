@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -17,7 +19,7 @@ public class GetOrderUserTest {
     public String accessToken;
 
     @Before
-    public void setUp() {
+    public void setUp(){
         userClient = new UserClient();
         orderClient = new OrderClient();
     }
@@ -41,6 +43,7 @@ public class GetOrderUserTest {
 
         ValidatableResponse responseOrders = orderClient.getOrderForUser(accessToken);
 
+        responseOrders.assertThat().statusCode(SC_OK);
         responseOrders.assertThat().body("success", is(true));
         responseOrders.assertThat().body("total", notNullValue());
         responseOrders.assertThat().body("totalToday", notNullValue());
@@ -59,6 +62,7 @@ public class GetOrderUserTest {
     public void getOrderWithoutAuthMessageError() {
         ValidatableResponse responseOrders = orderClient.getOrdersForUserWithoutAuth();
 
+        responseOrders.assertThat().statusCode(SC_UNAUTHORIZED);
         responseOrders.assertThat().body("success", is(false));
         responseOrders.assertThat().body("message", is("You should be authorised"));
     }
